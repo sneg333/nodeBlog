@@ -1,2 +1,7 @@
 блог node
 express
+mongoose (должен работать в консоли постоянно) запускается: mongod --dbpath /data/db
+
+запуск  сервера {
+    npm run start или npm run dev
+}

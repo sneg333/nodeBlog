@@ -1,44 +1,53 @@
 const express = require('express')
+const mongoose = require('mongoose')
+const path = require('path')
+const exphbs = require('express-handlebars')
+const homeRouts = require('./routes/home')
+const cardRouts = require('./routes/cart')
+const addRouts = require('./routes/add')
+const coursesRouts = require('./routes/courses')
+
 const bodyParser = require('body-parser')
 
 const app = express()
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
 
-const posts = [
-    {
-        title: 'hi1',
-        text: 'go1'
-    },
-    {
-        title: 'hi2',
-        text: 'go2'
-    },
-    {
-        title: 'hi3',
-        text: 'go3'
-    },
-    {
-        title: 'hi4',
-        text: 'go4'
+const hbs = exphbs.create({
+    defaultLayout: 'main',
+    extname: 'hbs'
+})
+
+app.engine('hbs', hbs.engine)
+app.set('view engine', 'hbs')
+app.set('views', 'views')
+
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.urlencoded({extended: true}))
+app.use('/', homeRouts)
+app.use('/add', addRouts)
+app.use('/courses', coursesRouts)
+app.use('/card', cardRouts)
+
+const PORT = process.env.PORT || 3000
+
+async function start() {
+    try {
+        const url = 'mongodb+srv://blog:LPB0NLMFAyYQJI0Z@cluster0.vcifg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+        await mongoose.connect(url, {useNewUrlParser: true});
+    
+        app.listen(PORT, () => {
+            console.log(`work it ${PORT}`)
+        })
+    } catch(e) {
+        console.log(e)
     }
-]
 
-app.get('/posts', function(req,res) {
-    return res.send(posts)
-})
-app.get('/posts/:id', function(req,res) {
-    const id = req.params.id
-    return res.send(posts[id])
-})
+}
+start()
 
-app.post('/posts', function(req,res) {
-    const data = req.body
-    console.log(data)
-    posts.push(data)
-    return res.send(posts)
-})
+// mongoDB {
+//  blog - LPB0NLMFAyYQJI0Z
 
-app.listen(5000, function() {
-    console.log('work it')
-})
+// igortot - 5LpRquwtTDHgMkRZ
+// }
+
+
